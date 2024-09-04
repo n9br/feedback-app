@@ -30,10 +30,22 @@ const saveFeedback = async (feedback) => {
     await fs.writeFile(feedbackFilePath, JSON.stringify(feedback, null, 2));
 }
 
-app.post('/feedback', (req, res) => {
+// POST /feedback - fuegt neues Feedback hinzu
+app.post('/feedback', async (req, res) => {
     const { title, text } = req.body;
 
-
+    if (!title || !text ) {
+        return res.status(400).json({ message: 'title und text sind im body erforderlich.' })
+    }
+    
+    try {
+        const feedback = await loadFeedback();
+        feedback.push({ title, text });
+        await saveFeedback(feedback);
+        res.status(201).json({ message: 'Feedback erfolgreich gespeichert.'});
+    } catch (error) {
+        res.status(500).json({ message: 'Fehler beim Speichern des Feedbacks.' });
+    }
 
 });
 
