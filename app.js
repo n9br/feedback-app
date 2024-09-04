@@ -35,25 +35,49 @@ app.post('/feedback', async (req, res) => {
     const { title, text } = req.body;
 
     if (!title || !text ) {
-        return res.status(400).json({ message: 'title und text sind im body erforderlich.' })
+        return res.status(400).json({ message: "title und text sind im body erforderlich." })
     }
     
     try {
         const feedback = await loadFeedback();
         feedback.push({ title, text });
         await saveFeedback(feedback);
-        res.status(201).json({ message: 'Feedback erfolgreich gespeichert.'});
+        res.status(201).json({ message: "Feedback erfolgreich gespeichert."});
     } catch (error) {
-        res.status(500).json({ message: 'Fehler beim Speichern des Feedbacks.' });
+        res.status(500).json({ message: "Fehler beim Speichern des Feedbacks." });
     }
 
 });
 
-app.get('/feedback', (req, res) => {
+app.get('/feedback', async (req, res) => {
+
+    try {
+        const feedback = await loadFeedback();
+        res.status(200).json(feedback);
+
+    } catch (error) {
+        res.status(500).json({ message: "Fehler beim Abrufen des Feedbacks." });
+    }
 
 });
 
-app.delete('/feedback', (req, res) => {
+app.delete('/feedback/:title', async (req, res) => {
+    const title = req.params;
+
+    try {
+        let feedback = await loadFeedback();
+        const filteredFeedback = feedback.filter(fb => fb.title !== title);
+
+        if (feedback.length === filteredFeedback.length ) {
+            return res.status(404).json({ message: "Feedback nicht gefunden. " });
+        }
+
+        await saveFeedback(filteredFeedback);
+        res.status(200).json({ message: "Feedback erfolgreich geloescht." });
+
+    } catch (error) {
+        res.status(500).json({ message: 'Fehler beim Loeschen des Feedbacks.' });
+    }
 
 });
 
