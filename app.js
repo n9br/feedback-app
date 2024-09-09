@@ -43,7 +43,7 @@ app.post('/feedback', async (req, res) => {
         const feedback = await loadFeedback();
         feedback.push({ title, text });
         await saveFeedback(feedback);
-        res.status(201).json({ message: "Feedback erfolgreich gespeichert."});
+        res.status(201).json({ message: "Toll!!! Feedback erfolgreich gespeichert."});
     } catch (error) {
         res.status(500).json({ message: "Fehler beim Speichern des Feedbacks." });
     }
