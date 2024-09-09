@@ -2,6 +2,7 @@ import express from 'express';
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import pkg from 'pg';
 
 // Creating the express app
 const app = express();
@@ -9,6 +10,33 @@ const PORT = 3000;
 
 // Middleware for parsing JSON
 app.use(express.json());
+
+// Creating a database connection
+const { Pool } = pkg;
+
+const pool = new Pool({
+    user: 'postgres',
+    host: 'postgres-db',
+    database: 'feedbackdb',
+    password: 'password',
+    port: 5432
+});
+
+// Creating the feedback table
+const createTable = async () => {
+    try {
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS feedback (
+                id SERIAL PRIMARY KEY,
+                title VARCHAR(255) NOT NULL,
+                text TEXT NOT NULL
+                );
+            `);
+
+    } catch (error) {
+        console.error('Error creating table: ', error);
+    }
+}
 
 // Determining directory and file location
 const __filename = fileURLToPath(import.meta.url);
