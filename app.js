@@ -1,7 +1,4 @@
 import express from 'express';
-import fs from 'fs/promises';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import pkg from 'pg';
 
 // Creating the express app
@@ -38,26 +35,7 @@ const createTable = async () => {
     }
 }
 
-// Determining directory and file location
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const feedbackDirPath = path.join(__dirname, 'data');
-const feedbackFilePath = path.join(feedbackDirPath, 'feedback.json');
-
-// Helper functions
-const loadFeedback = async () => {
-    try {
-        const data = await fs.readFile(feedbackFilePath, 'utf-8');
-        return JSON.parse(data);
-    } catch (error) {
-        return [];
-    }   
-}
-
-const saveFeedback = async (feedback) => {
-    await fs.writeFile(feedbackFilePath, JSON.stringify(feedback, null, 2));
-}
+createTable();
 
 // POST /feedback - fuegt neues Feedback hinzu
 app.post('/feedback', async (req, res) => {
@@ -68,9 +46,8 @@ app.post('/feedback', async (req, res) => {
     }
     
     try {
-        const feedback = await loadFeedback();
-        feedback.push({ title, text });
-        await saveFeedback(feedback);
+        const query = `INSERT INTO feedback (title, text) VALUES ($1, $2);`;
+        await pool.query(query, [title, text]);
         res.status(201).json({ message: "Toll!!! Feedback erfolgreich gespeichert."});
     } catch (error) {
         res.status(500).json({ message: "Fehler beim Speichern des Feedbacks." });
@@ -78,11 +55,14 @@ app.post('/feedback', async (req, res) => {
 
 });
 
+
+// GET /feedback - gibt alle Feedback Eintraege zurueck
 app.get('/feedback', async (req, res) => {
 
     try {
-        const feedback = await loadFeedback();
-        res.status(200).json(feedback);
+        const query = `SELECT * FROM feedback;`;
+        const result = await pool.query(query);
+        res.status(200).json(result.rows);
 
     } catch (error) {
         res.status(500).json({ message: "Fehler beim Abrufen des Feedbacks." });
@@ -90,18 +70,18 @@ app.get('/feedback', async (req, res) => {
 
 });
 
+// DELETE /feedback/title - Loescht Feedback mit dem gegebenen title
 app.delete('/feedback/:title', async (req, res) => {
     const { title } = req.params;
 
     try {
-        let feedback = await loadFeedback();
-        const filteredFeedback = feedback.filter(fb => fb.title !== title);
+        const query = `DELETE FROM feedback WHERE title = $1;`;
+        const result = await pool.query(query, [title]);
 
-        if (feedback.length === filteredFeedback.length ) {
+        if ( result.rowCount === 0 ) {
             return res.status(404).json({ message: "Feedback nicht gefunden." });
         }
 
-        await saveFeedback(filteredFeedback);
         res.status(200).json({ message: "Feedback erfolgreich geloescht." });
 
     } catch (error) {
@@ -110,7 +90,7 @@ app.delete('/feedback/:title', async (req, res) => {
 
 });
 
-
+// Start the app
 app.listen(PORT, ()=> {
     console.log(`Server laeuft auf http://localhost:${PORT}`);
 });
