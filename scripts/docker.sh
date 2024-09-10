@@ -1,8 +1,8 @@
 # Build the backend app container
 docker build \
-    -t feedback-app:v3.5 \
+    -t feedback-app:v4.0 \
     -t feedback-app:latest \
-    -t galaataman/feedback-app:v3.5 \
+    -t galaataman/feedback-app:v4.0 \
     -t galaataman/feedback-app:latest .
 
 # Create a docker network for the app
@@ -25,6 +25,11 @@ docker run \
     --name feedback-app \
     --network feedback-app-nw \
     -p 3030:3000 \
+    -e DB_USER=postgres \
+    -e DB_HOST=postgres-db \
+    -e DB_NAME=feedbackdb \
+    -e DB_PASSWORD=password \
+    -e DB_PORT=5432 \
     -d \
     --rm \
     feedback-app
