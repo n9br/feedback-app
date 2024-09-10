@@ -1,0 +1,40 @@
+name: feedback-app
+
+services:
+  postgres_db:
+    image: postgres:latest
+    container_name: postgres-db
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=feedbackdb
+    volumes:
+      - feedback-app-data:/var/lib/postgresql/data
+    networks:
+      - feedback-app-nw
+    ports:
+      - "5432:5432"
+
+  feedback_app:
+    image: feedback-app:latest
+    container_name: feedback-app
+    environment:
+      - DB_USER=postgres
+      - DB_HOST=postgres-db
+      - DB_NAME=feedbackdb
+      - DB_PASSWORD=password
+      - DB_PORT=5432
+    networks:
+      - feedback-app-nw
+    ports:
+      - "3030:3000"
+    depends_on:
+      - postgres_db
+
+networks:
+  feedback-app-nw:
+    driver: bridge
+
+volumes:
+  feedback-app-data:
+
+
