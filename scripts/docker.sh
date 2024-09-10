@@ -1,5 +1,7 @@
+# Create a docker network for the app
 docker network create feedback-app-nw
 
+# Run the postgres database container
 docker run \
     --name postgres-db \
     --network feedback-app-nw \
@@ -10,9 +12,16 @@ docker run \
     -d \
     postgres
 
+# Run the backend app container
 docker run \
     --name feedback-app \
     --network feedback-app-nw \
     -p 3030:3000 \
     -d \
     feedback-app
+
+# Stop the containers
+docker stop feedback-app postgres-db
+
+# Remove the containers
+docker rm feedback-app postgres-db
