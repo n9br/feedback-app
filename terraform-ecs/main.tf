@@ -6,12 +6,18 @@ resource "aws_ecs_cluster" "feedback-app-cluster" {
   name = "feedback-app-cluster"
 }
 
+resource "aws_cloudwatch_log_group" "feedback-app-log-group" {
+  name = "/ecs/feedback-app-logs"
+  retention_in_days = 7
+}
+
 resource "aws_ecs_task_definition" "feedback-app-task-definition" {
   family = "feedback-app-task"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = 256
   memory                   = 512
+  execution_role_arn = var.ecs_task_execution_role_arn
   container_definitions = <<DEFINITION
     [
         {
@@ -46,6 +52,17 @@ resource "aws_ecs_task_definition" "feedback-app-task-definition" {
                 "timeout": 5,
                 "retries": 5,
                 "startPeriod": 5
+            },
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/feedback-app-logs",
+                    "mode": "non-blocking",
+                    "awslogs-create-group": "true",
+                    "max-buffer-size": "25m",
+                    "awslogs-region": "eu-central-1",
+                    "awslogs-stream-prefix": "postgres"
+                }
             }
         },
         {
@@ -88,7 +105,18 @@ resource "aws_ecs_task_definition" "feedback-app-task-definition" {
                     "containerName": "postgres-db",
                     "condition": "HEALTHY"
                 }
-            ]
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/feedback-app-logs",
+                    "mode": "non-blocking",
+                    "awslogs-create-group": "true",
+                    "max-buffer-size": "25m",
+                    "awslogs-region": "eu-central-1",
+                    "awslogs-stream-prefix": "api"
+                }
+            }
         }
     ]
   DEFINITION
