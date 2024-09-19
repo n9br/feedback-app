@@ -4,7 +4,7 @@ metadata:
   name: feedback-app-api-service
 spec:
   selector:
-    app: feedback-app
+    app: feedback-app-api
   ports:
   - port: 3000
     targetPort: 3000
@@ -20,11 +20,11 @@ spec:
   replicas: 2
   selector:
     matchLabels:
-      app: feedback-app
+      app: feedback-app-api
   template:
     metadata:
       labels:
-        app: feedback-app
+        app: feedback-app-api
         environment: test
     spec:
       containers:
@@ -47,3 +47,12 @@ spec:
           value: password
         - name: DB_PORT
           value: "5432"
+        livenessProbe:
+          httpGet:
+            path: /feedback 
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 5
+          failureThreshold: 5
+          successThreshold: 1

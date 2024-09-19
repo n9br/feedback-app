@@ -4,7 +4,7 @@ metadata:
   name: feedback-app-database-service
 spec:
   selector:
-    app: feedback-app
+    app: feedback-app-db
   ports:
   - protocol: TCP
     port: 5432
@@ -21,11 +21,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: feedback-app
+      app: feedback-app-db
   template:
     metadata:
       labels:
-        app: feedback-app
+        app: feedback-app-db
         environment: test
     spec:
       containers:
