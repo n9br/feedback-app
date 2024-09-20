@@ -53,3 +53,10 @@ spec:
           timeoutSeconds: 5
           failureThreshold: 5
           successThreshold: 1
+        volumeMounts:
+        - name: feedback-database-volume
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: feedback-database-volume
+        persistentVolumeClaim:
+          claimName: feedback-database-pvc
