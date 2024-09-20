@@ -39,9 +39,15 @@ spec:
         - containerPort: 5432
         env:
         - name: POSTGRES_PASSWORD
-          value: password
+          valueFrom:
+            secretKeyRef:
+              name: feedback-app-secret
+              key: DB_PASSWORD
         - name: POSTGRES_DB
-          value: feedbackdb
+          valueFrom:
+            configMapKeyRef:
+              name: feedback-app-config
+              key: DB_NAME
         livenessProbe:
           exec:
             command:
@@ -54,9 +60,9 @@ spec:
           failureThreshold: 5
           successThreshold: 1
         volumeMounts:
-        - name: feedback-database-volume
+        - name: feedback-db-volume
           mountPath: /var/lib/postgresql/data
       volumes:
-      - name: feedback-database-volume
+      - name: feedback-db-volume
         persistentVolumeClaim:
           claimName: feedback-database-pvc

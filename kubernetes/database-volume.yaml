@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: feedback-database-pvolume
+  name: feedback-database-volume
 spec:
   capacity:
     storage: 100Mi
