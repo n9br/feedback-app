@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-world-test
+  namespace: default
+spec:
+  selector:
+    app: hello-world-test
+  ports:
+  - port: 80
+    targetPort: 80
+  type: LoadBalancer
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world-test
+  namespace: default
+  labels:
+    app: hello-world-test
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: hello-world-test
+  template:
+    metadata:
+      labels:
+        app: hello-world-test
+    spec:
+      containers:
+      - name: hello-world-container
+        image: nginxdemos/hello:latest
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+
