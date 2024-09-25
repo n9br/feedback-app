@@ -45,4 +45,4 @@ docker stop feedback-app postgres-db
 docker rm feedback-app postgres-db
 
 # Start the app with Docker Compose
-docker-compose up
+docker-compose up --build
