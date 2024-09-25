@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
       - name: feedback-app-backend-api
-        image: galaataman/feedback-app:v4.0
+        image: galaataman/feedback-app:v4.5
         resources:
           requests:
             memory: "64Mi"
@@ -39,6 +39,7 @@ spec:
             cpu: "250m"
         ports:
         - containerPort: 3000
+        imagePullPolicy: Always
         env:
         - name: DB_USER
           valueFrom:
