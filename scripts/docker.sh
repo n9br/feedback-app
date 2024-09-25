@@ -5,6 +5,10 @@ docker build \
     -t galaataman/feedback-app:v4.5 \
     -t galaataman/feedback-app:latest .
 
+# Push the images to the Docker Hub
+docker push galaataman/feedback-app:v4.5
+docker push galaataman/feedback-app:latest
+
 # Create a docker network for the app
 docker network create feedback-app-nw
 
@@ -39,3 +43,6 @@ docker stop feedback-app postgres-db
 
 # Remove the containers
 docker rm feedback-app postgres-db
+
+# Start the app with Docker Compose
+docker-compose up

@@ -34,6 +34,19 @@ services:
       postgres_db:
         condition: service_healthy
 
+  feedback_app_frontend:
+    image: galaataman/feedback-app-frontend:latest
+    container_name: feedback-app-frontend
+    environment:
+      - FEEDBACK_BACKEND_HOST=feedback-app
+      - FEEDBACK_BACKEND_PORT=3000
+    networks:
+      - feedback-app-nw
+    ports:
+      - "80:80"
+    depends_on:
+      - feedback_app
+
 networks:
   feedback-app-nw:
     driver: bridge
