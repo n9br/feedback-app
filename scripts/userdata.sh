@@ -4,6 +4,12 @@
 yum update -y
 yum install -y docker
 
+# Add user to docker group
+usermod -aG docker ec2-user
+
+# Install Req
+yum install -y git
+
 #Start Docker
 service docker start
 systemctl enable docker
@@ -13,9 +19,13 @@ curl -L "https://github.com/docker/compose/releases/download/v2.0.1/docker-compo
 chmod +x /usr/local/bin/docker-compose
 
 #Download Docker-Compose App Config
-mkdir /home/ec2-user/feedback-app
+# mkdir /home/ec2-user/feedback-app
+# cd /home/ec2-user/feedback-app
+# wget https://raw.githubusercontent.com/atamankina/feedback-app/main/docker-compose.yml
+
+cd /home/ec2-user
+git clone https://github.com/atamankina/feedback-app.git
 cd /home/ec2-user/feedback-app
-wget https://raw.githubusercontent.com/atamankina/feedback-app/main/docker-compose.yml
 
 #Start the app
-docker-compose up -d
+docker-compose up --build -d
