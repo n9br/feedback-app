@@ -23,8 +23,7 @@ chmod +x /usr/local/bin/docker-compose
 # cd /home/ec2-user/feedback-app
 # wget https://raw.githubusercontent.com/atamankina/feedback-app/main/docker-compose.yml
 
-cd /home/ec2-user
-git clone https://github.com/atamankina/feedback-app.git
+git clone https://github.com/atamankina/feedback-app.git /home/ec2-user/feedback-app
 cd /home/ec2-user/feedback-app
 
 #Start the app
