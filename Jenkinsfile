@@ -36,10 +36,12 @@ pipeline {
         stage('Login to Docker Registry') {
             steps {
                 echo 'Logging in to registry..'
-                script {
-                    // Login to Docker registry using credentials stored in Jenkins
-                    docker.withRegistry('', "${DOCKER_CREDENTIALS_ID}") {
-                        echo "Logged into Docker Registry"
+                container('docker') {
+                    script {
+                        // Login to Docker registry using credentials stored in Jenkins
+                        docker.withRegistry('', "${DOCKER_CREDENTIALS_ID}") {
+                            echo "Logged into Docker Registry"
+                        }
                     }
                 }
             }
