@@ -34,6 +34,16 @@ pipeline {
                 echo 'Build successful.'
             }    
         }
+        stage('Login to Docker Registry') {
+            steps {
+                script {
+                    // Login to Docker registry using credentials stored in Jenkins
+                    docker.withRegistry("https://${REGISTRY_URL}", "${DOCKER_CREDENTIALS_ID}") {
+                        echo "Logged into Docker Registry"
+                    }
+                }
+            }
+        }
         stage('Docker Push') {
             steps {
                 echo 'Pushing the image to Docker Hub...'
