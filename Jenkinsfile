@@ -13,7 +13,7 @@ pipeline {
     environment {
         GITHUB_REPO = 'https://github.com/n9br/feedback-app.git'        
         DOCKER_CREDENTIALS_ID = 'dockerhub-token'
-        DOCKER_REPO = 'n9br/feedback-app'
+        DOCKER_REPO = 'andreneugebauer/feedback-app'
         IMAGE_TAG = "${BUILD_NUMBER}"
         DOCKER_IMAGE = "${DOCKER_REPO}:${IMAGE_TAG}"
     }
