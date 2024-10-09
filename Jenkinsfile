@@ -11,11 +11,12 @@ pipeline {
     }
     
     environment {
-        GITHUB_REPO = 'https://github.com/n9br/feedback-app.git'        
+        GITHUB_REPO = 'https://github.com/n9br/feedback-app.git'
+        REGISTRY_URL = 'hub.docker.com/'        
         DOCKER_CREDENTIALS_ID = 'dockerhub-token'
         DOCKER_REPO = 'andreneugebauer/feedback-app'
         IMAGE_TAG = "${BUILD_NUMBER}"
-        DOCKER_IMAGE = "${DOCKER_REPO}:${IMAGE_TAG}"
+        DOCKER_IMAGE = "${REGISTRY_URL}/${DOCKER_REPO}:${IMAGE_TAG}"
     }
     
     stages {        
@@ -38,7 +39,7 @@ pipeline {
                 echo 'Pushing the image to Docker Hub...'
                 container('docker') {
                     script {
-                        docker.withRegistry('', "${DOCKER_CREDENTIALS_ID}") {
+                        docker.withRegistry('https://${REGISTRY_URL}', "${DOCKER_CREDENTIALS_ID}") {
                             sh 'docker push $DOCKER_IMAGE'
                         }
                     }  
