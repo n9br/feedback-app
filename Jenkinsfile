@@ -12,11 +12,10 @@ pipeline {
     
     environment {
         GITHUB_REPO = 'https://github.com/n9br/feedback-app.git'
-        REGISTRY_URL = 'hub.docker.com'        
         DOCKER_CREDENTIALS_ID = 'dockerhub-token'
         DOCKER_REPO = 'andreneugebauer/feedback-app'
         IMAGE_TAG = "${BUILD_NUMBER}"
-        DOCKER_IMAGE = "${REGISTRY_URL}/${DOCKER_REPO}:${IMAGE_TAG}"
+        DOCKER_IMAGE = "${DOCKER_REPO}:${IMAGE_TAG}"
     }
     
     stages {        
@@ -34,22 +33,22 @@ pipeline {
                 echo 'Build successful.'
             }    
         }
-        stage('Login to Docker Registry') {
-            steps {
-                script {
-                    // Login to Docker registry using credentials stored in Jenkins
-                    docker.withRegistry("https://${REGISTRY_URL}", "${DOCKER_CREDENTIALS_ID}") {
-                        echo "Logged into Docker Registry"
-                    }
-                }
-            }
-        }
+        // stage('Login to Docker Registry') {
+        //     steps {
+        //         script {
+        //             // Login to Docker registry using credentials stored in Jenkins
+        //             docker.withRegistry("https://${REGISTRY_URL}", "${DOCKER_CREDENTIALS_ID}") {
+        //                 echo "Logged into Docker Registry"
+        //             }
+        //         }
+        //     }
+        // }
         stage('Docker Push') {
             steps {
                 echo 'Pushing the image to Docker Hub...'
                 container('docker') {
                     script {
-                        docker.withRegistry('https://${REGISTRY_URL}', "${DOCKER_CREDENTIALS_ID}") {
+                        docker.withRegistry('', "${DOCKER_CREDENTIALS_ID}") {
                             sh 'docker push $DOCKER_IMAGE'
                         }
                     }  
